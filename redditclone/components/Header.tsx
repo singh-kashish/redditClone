@@ -17,7 +17,10 @@ import {
   SpeakerphoneIcon,
   VideoCameraIcon,
 } from "@heroicons/react/outline";
+import { signIn, useSession,signOut } from "next-auth/react";
+
 function Header() {
+  const { data: session } = useSession();
   return (
     <div className="sticky top-0 z-50 flex bg-white px-4 py-2 shadow-sm">
       <div className="relative h-10 w-20 flex-shrink-0 cursor-pointer">
@@ -36,7 +39,7 @@ function Header() {
       <form className="flex flex-1 items-center space-x-2 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1">
         <SearchIcon className="h-6 w-6 text-gray-400" />
         <input
-          className="flex-1 outline-none"
+          className="flex-1 outline-none bg-gray-100 "
           type="text"
           placeholder="Find something amazing"
         />
@@ -56,19 +59,45 @@ function Header() {
         <MenuIcon className="icon" />
       </div>
       {/* SignIn / SignOut button */}
-      <div className="hidden lg:flex items-center border border-gray-100 p-2 cursor-pointer space-x-2">
-        <div className="relative h-5 w-5 flex-shrink-0">
-          <Image
-            objectFit="contain"
-            src="https://logoeps.com/wp-content/uploads/2014/09/52053-reddit-logo-icon-vector-icon-vector-eps.png"
-            height={5}
-            width={5}
-            layout="fill"
-            alt=""
-          />
+      {session ? (
+        <div
+          onClick={() => signOut()}
+          className="hidden lg:flex items-center border border-gray-100 p-2 cursor-pointer space-x-2"
+        >
+          <div className="relative h-5 w-5 flex-shrink-0">
+            <Image
+              objectFit="contain"
+              src="https://logoeps.com/wp-content/uploads/2014/09/52053-reddit-logo-icon-vector-icon-vector-eps.png"
+              height={5}
+              width={5}
+              layout="fill"
+              alt=""
+            />
+          </div>
+          <div className="flex-1 text-xs">
+            <p className="truncate">{session?.user?.name}</p>
+            <p className="text-gray-400">1 karma</p>
+          </div>
+          <ChevronDownIcon className="h-5 flex-shrink-0 text-gray-400"/>
         </div>
-        <p className="text-gray-400">Sign In</p>
-      </div>
+      ) : (
+        <div
+          onClick={() => signIn()}
+          className="hidden lg:flex items-center border border-gray-100 p-2 cursor-pointer space-x-2"
+        >
+          <div className="relative h-5 w-5 flex-shrink-0">
+            <Image
+              objectFit="contain"
+              src="https://logoeps.com/wp-content/uploads/2014/09/52053-reddit-logo-icon-vector-icon-vector-eps.png"
+              height={5}
+              width={5}
+              layout="fill"
+              alt=""
+            />
+          </div>
+          <p className="text-gray-400">Sign In</p>
+        </div>
+      )}
     </div>
   );
 }
