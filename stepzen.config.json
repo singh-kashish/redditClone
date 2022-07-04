@@ -1,0 +1,4 @@
+{
+  "endpoint": "api/gauche-mandrill",
+  "root": "redditClone/stepzen"
+}

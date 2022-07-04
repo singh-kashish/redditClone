@@ -107,6 +107,15 @@ type Query {
       table: "subreddit"
       configuration: "postgresql_config"
     )
+    getSubredditListByTopic(topic:String!): [Subreddit]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+        select * from "subreddit" where "topic"=$1
+      """
+      configuration: "postgresql_config"
+    )
   getSubreddit(id: ID!): Subreddit
     @dbquery(
       type: "postgresql"
@@ -168,7 +177,7 @@ type Mutation {
   insertPost(
     image: String!
     body: String!
-    created_at: DateTime!
+    
     subreddit_id: ID!
     title: String!
     username: String!
@@ -188,7 +197,7 @@ type Mutation {
       dml: DELETE
       configuration: "postgresql_config"
     )
-  insertSubreddit(created_at: DateTime!, topic: String!): Subreddit
+  insertSubreddit(created_at: DateTime, topic: String!): Subreddit
     @dbquery(
       type: "postgresql"
       schema: "public"
