@@ -70,8 +70,20 @@ type Query {
     @dbquery(
       type: "postgresql"
       schema: "public"
-      query:"""
+      query: """
       select * from "post"
+      order by "post"."created_at" desc
+      """
+      configuration: "postgresql_config"
+    )
+  getPostListByTopic(topic: String!): [Post]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      select *,"post"."id" as id from "post"
+      join "subreddit" on "subreddit"."id" = "post"."subreddit_id"
+      where "subreddit"."topic" = $1
       order by "post"."created_at" desc
       """
       configuration: "postgresql_config"
@@ -110,12 +122,12 @@ type Query {
       table: "subreddit"
       configuration: "postgresql_config"
     )
-    getSubredditListByTopic(topic:String!): [Subreddit]
+  getSubredditListByTopic(topic: String!): [Subreddit]
     @dbquery(
       type: "postgresql"
       schema: "public"
       query: """
-        select * from "subreddit" where "topic"=$1
+      select * from "subreddit" where "topic"=$1
       """
       configuration: "postgresql_config"
     )
@@ -159,7 +171,7 @@ type Mutation {
   insertComment(
     post_id: ID!
     text: String!
-    created_at: DateTime!
+
     username: String!
   ): Comment
     @dbquery(
@@ -180,7 +192,7 @@ type Mutation {
   insertPost(
     image: String!
     body: String!
-    
+
     subreddit_id: ID!
     title: String!
     username: String!

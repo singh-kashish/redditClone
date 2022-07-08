@@ -12,7 +12,7 @@ const Home: NextPage = () => {
         <title>Reddit Clone</title>
       </Head>
       <PostBox />
-      <div className="flex">
+      <div className="">
         <Feed/>
       </div>
       
