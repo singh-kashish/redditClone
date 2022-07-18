@@ -9,7 +9,7 @@ import {
   ShareIcon,
   PencilIcon,
   PencilAltIcon,
-  TrashIcon
+  TrashIcon,
 } from "@heroicons/react/outline";
 
 import Avatar from "./Avatar";
@@ -22,12 +22,14 @@ import { GET_ALL_VOTES_BY_POST_ID } from "../graphql/queries";
 import { ADD_VOTE, MODIFY_VOTE, REMOVE_VOTE } from "../graphql/mutations";
 import { useMutation, useQuery } from "@apollo/client";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 type Props = {
   post: Post;
 };
 
 const Post = ({ post }: Props) => {
+  const Router = useRouter();
   const [vote, setVote] = useState<boolean>();
   const [voteId, setVoteId] = useState<number>();
   const { data: session } = useSession();
@@ -133,16 +135,18 @@ const Post = ({ post }: Props) => {
     return displayNumber;
   };
 
-  const editFunction = async () =>{
+  const editFunction = async () => {
     // check if user is logged in and the post is made by them
-    if(!session)toast("Log in to check if this post was made by you!")
-    else if(session?.user?.name===post?.username){
-        toast('maybe')
+    if (!session) toast("Log in to check if this post was made by you!");
+    else if (session?.user?.name === post?.username) {
+      toast("Taking you to the edit page");
+      Router.push(`/post/edit/${post.id}`);
+    } else {
+      console.log(post);
+      console.log("usr", session?.user?.name);
+      toast("Try editing a post made by you, and not someone else");
     }
-    else{
-      toast("Try editing a post made by you, and not someone else")
-    }
-  }
+  };
 
   useEffect(() => {
     const votes: Vote[] = data?.getVoteUsingPost_id;
@@ -226,7 +230,7 @@ const Post = ({ post }: Props) => {
               <BookmarkIcon className="h-6 w-6" />
               <p className="hidden sm:inline">Save</p>
             </div>
-            <div className="postButtons" onClick={()=>editFunction()}>
+            <div className="postButtons" onClick={() => editFunction()}>
               <PencilIcon className="h-6 w-6" />
               <p className="hidden sm:inline">Edit</p>
             </div>

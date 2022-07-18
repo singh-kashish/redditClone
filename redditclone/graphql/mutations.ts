@@ -75,3 +75,14 @@ export const MODIFY_VOTE = gql`
     }
   }
 `;
+
+export const MODIFY_POST = gql`
+    mutation myMutation($id:ID!,$image:String!,$body:String!,$title:String!){
+        modifyPost(id:$id,image:$image,body:$body,title:$title){
+            id,
+            image,
+            body,
+            title
+        }
+    }
+`

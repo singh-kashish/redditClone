@@ -171,7 +171,6 @@ type Mutation {
   insertComment(
     post_id: ID!
     text: String!
-
     username: String!
   ): Comment
     @dbquery(
@@ -255,4 +254,16 @@ type Mutation {
       """
       configuration: "postgresql_config"
     )
+    modifyPost(id:ID!,image: String!,body: String!,title: String!):Post
+      @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "public"."post"
+      SET "image"=$2,"body"=$3,"title"=$4
+      WHERE "id"=$1
+      """
+      configuration: "postgresql_config"
+    )
+   
 }
