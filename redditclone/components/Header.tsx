@@ -43,7 +43,7 @@ function Header() {
         </div>
       </Link>
       {/* SearchIcon */}
-      <form className="flex flex-1 items-center space-x-2 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1">
+      <form className="hidden lg:flex flex-1 items-center space-x-2 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1">
         <SearchIcon className="h-6 w-6 text-gray-400" />
         <input
           className="flex-1 outline-none bg-gray-100 "
@@ -69,7 +69,7 @@ function Header() {
       {session ? (
         <div
           onClick={() => signOut()}
-          className="hidden lg:flex items-center border border-gray-100 p-2 cursor-pointer space-x-2"
+          className="flex items-center border border-gray-100 p-2 cursor-pointer space-x-2 hover:bg-gray-100"
         >
           <div className="relative h-5 w-5 flex-shrink-0">
             <Image
@@ -90,7 +90,7 @@ function Header() {
       ) : (
         <div
           onClick={() => signIn()}
-          className="hidden lg:flex items-center border border-gray-100 p-2 cursor-pointer space-x-2"
+          className="flex items-center border border-gray-100 p-2 cursor-pointer space-x-2 hover:bg-gray-100 mx-auto"
         >
           <div className="relative h-5 w-5 flex-shrink-0">
             <Image

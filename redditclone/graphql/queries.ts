@@ -107,3 +107,14 @@ export const GET_POSTS_BY_POST_ID = gql`
     }
   }
 `;
+
+export const GET_ALL_VOTES_BY_POST_ID = gql`
+  query Myquery($id: ID!) {
+    getVoteUsingPost_id(id: $id) {
+      upvote
+      username
+      post_id
+      id
+    }
+  }
+`;
