@@ -18,22 +18,28 @@ import Link from "next/link";
 import { Jelly } from "@uiball/loaders";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { GET_ALL_VOTES_BY_POST_ID } from "../graphql/queries";
-import { ADD_VOTE, MODIFY_VOTE, REMOVE_VOTE } from "../graphql/mutations";
+import { GET_ALL_POSTS, GET_ALL_VOTES_BY_POST_ID } from "../graphql/queries";
+import { ADD_VOTE, DELETE_POST, MODIFY_VOTE, REMOVE_VOTE } from "../graphql/mutations";
 import { useMutation, useQuery } from "@apollo/client";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import Modal from "react-modal";
+
 
 type Props = {
   post: Post;
 };
 
 const Post = ({ post }: Props) => {
+  
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const Router = useRouter();
   const [vote, setVote] = useState<boolean>();
   const [voteId, setVoteId] = useState<number>();
   const { data: session } = useSession();
-
+  const [deletePost] = useMutation(DELETE_POST, {
+    refetchQueries:[GET_ALL_POSTS,"getAllPosts"],
+  });
   const { data, loading, error } = useQuery(GET_ALL_VOTES_BY_POST_ID, {
     variables: {
       id: post?.id,
@@ -160,6 +166,30 @@ const Post = ({ post }: Props) => {
     setVoteId(voteId);
   }, [data]);
 
+  const deleteThisPost = async () => {
+    if(session?.user?.name===post?.username){
+        const {
+          data: { deletePost: oldPost },
+        } = await deletePost({
+          variables: {
+            id: post?.id,
+          },
+        });
+
+        setModalIsOpen(false);
+        toast("Post was deleted");
+        Router.push("/");
+        return;
+    }
+    else{
+      toast("You aren't the author of this post, so can't delete this one...");
+      Router.push("/");
+      return;
+    }
+    
+  };
+
+
   if (!post)
     return (
       <div className="flex w-full items-center justify-center p-10 text-xl">
@@ -234,10 +264,62 @@ const Post = ({ post }: Props) => {
               <PencilIcon className="h-6 w-6" />
               <p className="hidden sm:inline">Edit</p>
             </div>
-            <div className="postButtons">
+
+            <div className="postButtons" onClick={() => setModalIsOpen(true)}>
               <TrashIcon className="h-6 w-6" />
               <p className="hidden sm:inline">Delete</p>
             </div>
+
+            <Modal
+              isOpen={modalIsOpen}
+              onRequestClose={() => setModalIsOpen(false)}
+              style={{
+                overlay: {
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: "rgba(255, 255, 255, 0.75)",
+                  zIndex:"100"
+                },
+                content: {
+                  position: "absolute",
+                  top: "200px",
+                  left: "450px",
+                  right: "450px",
+                  bottom: "250px",
+                  border: "1px solid #ccc",
+                  background: "#fff",
+                  overflow: "auto",
+                  WebkitOverflowScrolling: "touch",
+                  borderRadius: "4px",
+                  outline: "none",
+                  padding: "45px",
+                  zIndex:"100"
+                },
+              }}
+            >
+              <div className="flex flex-col items-center justify-center mt-11">
+                <p className="text-xl">Are you sure you want to delete?</p>
+                
+                <div className="flex flex-row justify-evenly mt-2">
+                  <button
+                    className="w-14 h-7 bg-teal-400 rounded-full mr-4 text-white"
+                    onClick={() => deleteThisPost()}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    className="w-14 h-7 bg-blue-700 rounded-full text-white"
+                    onClick={() => setModalIsOpen(false)}
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </Modal>
+
             <div className="postButtons">
               <DotsHorizontalIcon className="h-6 w-6" />
             </div>

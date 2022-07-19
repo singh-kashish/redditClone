@@ -95,3 +95,19 @@ export const MODIFY_COMMENT = gql`
             }
       }
 `;
+
+export const DELETE_COMMENT = gql`
+      mutation myMutation($id:ID!){
+        deleteComment(id:$id){
+          id
+        }
+      }
+`;
+
+export const DELETE_POST = gql`
+    mutation myMutation($id:ID!){
+      deletePost(id:$id){
+        id
+      }
+    }
+`;

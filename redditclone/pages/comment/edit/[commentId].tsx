@@ -90,8 +90,9 @@ const EditComment = () => {
   }
   else{
     return (
-      <div>
+      <div className="flex flex-1">
         <img
+        className="min-w-full"
           src="https://www.elegantthemes.com/blog/wp-content/uploads/2019/12/401-error-wordpress-featured-image.jpg"
           alt="f"
         />
