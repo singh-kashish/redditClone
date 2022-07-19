@@ -118,3 +118,14 @@ export const GET_ALL_VOTES_BY_POST_ID = gql`
     }
   }
 `;
+
+export const GET_COMMENT_BY__COMMENT_ID = gql`
+  query MyQuery($id:ID!){
+    getComment(id:$id){
+      id
+      post_id
+      username
+      text
+    }
+  }
+`

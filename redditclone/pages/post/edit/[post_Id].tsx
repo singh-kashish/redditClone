@@ -84,61 +84,74 @@ const EditPost = () => {
         <Jelly size={50} color="#FF4501" />
       </div>
     );
-  return (
-    <div className="mx-auto my-7 max-w-5xl">
-      <form
-        onSubmit={onSubmit}
-        className="sticky top-20 z-50 bg-white border rounded-md border-gray-300 p-2"
-      >
-        <div className="flex items-center space-x-3">
-          {/* Avatar */}
-          <Avatar />
-          <input
-            {...register("postTitle", { required: true })}
-            disabled={!session}
-            className="flex-1 rounded-md bg-gray-50"
-            type="text"
-          />
-          <PhotographIcon
-            className={`h-6 cursor-pointer text-gray-300
-            text-blue-300"
-            `}
-          />
-          <LinkIcon className={`h-6 text-gray-300`} />
-        </div>
-        {!!watch("postTitle") && (
-          <div className="flex flex-col py-2">
-            <div className="flex items-center px-2">
-              <p className="min-w-[90px]">Body:</p>
-              <input
-                className="m-2 flex-1 bg-blue-50 p-2 outline-none"
-                {...register("postBody")}
-                type="text"
-              />
-            </div>
-
-            {
-              <div className="flex items-center px-2">
-                <p className="min-w-[90px]">Image URL:</p>
+    if(session?.user?.name===post?.username){
+        return (
+          <div className="mx-auto my-7 max-w-5xl">
+            <form
+              onSubmit={onSubmit}
+              className="sticky top-20 z-50 bg-white border rounded-md border-gray-300 p-2"
+            >
+              <div className="flex items-center space-x-3">
+                {/* Avatar */}
+                <Avatar />
                 <input
-                  className="m-2 flex-1 bg-blue-50 p-2 outline-none"
-                  {...register("postImage")}
+                  {...register("postTitle", { required: true })}
+                  disabled={!session}
+                  className="flex-1 rounded-md bg-gray-50"
                   type="text"
                 />
+                <PhotographIcon
+                  className={`h-6 cursor-pointer text-gray-300
+            text-blue-300"
+            `}
+                />
+                <LinkIcon className={`h-6 text-gray-300`} />
               </div>
-            }
+              {!!watch("postTitle") && (
+                <div className="flex flex-col py-2">
+                  <div className="flex items-center px-2">
+                    <p className="min-w-[90px]">Body:</p>
+                    <input
+                      className="m-2 flex-1 bg-blue-50 p-2 outline-none"
+                      {...register("postBody")}
+                      type="text"
+                    />
+                  </div>
 
-            <button
-              type="submit"
-              className="w-full rounded-full p-2 bg-blue-600 text-white"
-            >
-              Finish Editing Post
-            </button>
+                  {
+                    <div className="flex items-center px-2">
+                      <p className="min-w-[90px]">Image URL:</p>
+                      <input
+                        className="m-2 flex-1 bg-blue-50 p-2 outline-none"
+                        {...register("postImage")}
+                        type="text"
+                      />
+                    </div>
+                  }
+
+                  <button
+                    type="submit"
+                    className="w-full rounded-full p-2 bg-blue-600 text-white"
+                  >
+                    Finish Editing Post
+                  </button>
+                </div>
+              )}
+            </form>
           </div>
-        )}
-      </form>
-    </div>
-  );
+        );
+    }
+    else{
+      return (
+        <div>
+          <img
+            src="https://www.elegantthemes.com/blog/wp-content/uploads/2019/12/401-error-wordpress-featured-image.jpg"
+            alt="f"
+          />
+        </div>
+      );
+    }
+  
 };
 
 export default EditPost;

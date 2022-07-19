@@ -85,4 +85,13 @@ export const MODIFY_POST = gql`
             title
         }
     }
-`
+`;
+
+export const MODIFY_COMMENT = gql`
+      mutation myMutation($id:ID!,$text:String!){
+            modifyComment(id:$id,text:$text){
+              id,
+              text
+            }
+      }
+`;

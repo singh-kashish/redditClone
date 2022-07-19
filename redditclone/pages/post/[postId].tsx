@@ -9,6 +9,7 @@ import { ADD_COMMENT } from "../../graphql/mutations";
 import toast from "react-hot-toast";
 import Avatar from "../../components/Avatar";
 import ReactTimeago from "react-timeago";
+import { PencilIcon } from "@heroicons/react/outline";
 
 const PostPage = () => {
   const router = useRouter();
@@ -34,25 +35,37 @@ const PostPage = () => {
     formState: { errors },
   } = useForm<FormData>();
 
+  const commentChecker = (comment) => {
+    if (!comment || comment.length == 0) return false;
+    else {
+      let invalidComment = false;
+      for (let i = 0; i < comment.length; i++) {
+        if (comment[i] != " ") invalidComment = true;
+      }
+      return invalidComment;
+    }
+  };
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     // post comment here
     console.log(data);
-    const notification = toast.loading("Posting your comment");
-
-    const dataFromgql = await addComment({
-      variables: {
-        post_id: router.query.postId,
-        username: session?.user?.name,
-        text: data.comment,
-      },
-    });
-
-    setValue("comment", "");
-    toast.success("Comment Successfully Posted!", {
-      id: notification,
-    });
-
-    console.log(dataFromgql);
+    if (commentChecker(data.comment)) {
+      const notification = toast.loading("Posting your comment");
+      const dataFromgql = await addComment({
+        variables: {
+          post_id: router.query.postId,
+          username: session?.user?.name,
+          text: data.comment,
+        },
+      });
+      setValue("comment", "");
+      toast.success("Comment Successfully Posted!", {
+        id: notification,
+      });
+      console.log(dataFromgql);
+    } else {
+      toast("Can't post an empty comment!");
+      return;
+    }
   };
 
   return (
@@ -86,18 +99,28 @@ const PostPage = () => {
       <div className="-my-5 rounded-b-md border border-t-0 border-gray-300 bg-white py-5 px-10">
         <hr className="py-2" />
         {post?.commentList.map((comment) => (
-          <div key={comment.id} className="relative flex items-center space-x-2 space-y-5">
-            <hr className="absolute top-10 h-16 border left-7 z-0"/>
+          <div
+            key={comment.id}
+            className="relative flex items-center space-x-2 space-y-5"
+          >
+            <hr className="absolute top-10 h-16 border left-7 z-0" />
             <div className="z-50">
               <Avatar seed={comment.username} />
             </div>
 
             <div className="flex flex-col">
               <p className="py-2 text-xs text-gray-400">
-                <span className="font-semibold text-gray-600">{comment.username}</span>{" "}
+                <span className="font-semibold text-gray-600">
+                  {comment.username}
+                </span>{" "}
                 <ReactTimeago date={comment.created_at} />
               </p>
+
               <p>{comment.text}</p>
+            </div>
+            <div className="postButtons absolute inset-y-0 right-0" onClick={()=>{router.push(`/comment/edit/${comment.id}`)}}>
+              <PencilIcon className="h-4 w-4" />
+              <p className="hidden sm:inline">Edit</p>
             </div>
           </div>
         ))}

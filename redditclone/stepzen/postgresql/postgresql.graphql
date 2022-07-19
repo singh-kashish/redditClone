@@ -265,5 +265,16 @@ type Mutation {
       """
       configuration: "postgresql_config"
     )
+    modifyComment(id:ID!,text:String!):Comment
+      @dbquery(
+        type: "postgresql"
+        schema: "public"
+        query: """
+            UPDATE "public"."comment"
+            SET "text"=$2 
+            WHERE "id"=$1
+        """
+        configuration:"postgresql_config"
+      )
    
 }
