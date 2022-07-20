@@ -12,6 +12,10 @@ import ReactTimeago from "react-timeago";
 import { PencilIcon, TrashIcon } from "@heroicons/react/outline";
 import Modal from "react-modal";
 
+type FormData = {
+  comment: string;
+};
+
 const PostPage = () => {
   const router = useRouter();
   const { data: session } = useSession();
@@ -39,7 +43,7 @@ const PostPage = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const commentChecker = (comment:any) => {
+  const commentChecker = (comment: any) => {
     if (!comment || comment.length == 0) return false;
     else {
       let invalidComment = false;
@@ -49,7 +53,7 @@ const PostPage = () => {
       return invalidComment;
     }
   };
-  const onSubmit: SubmitHandler<FormData> = async (data:any) => {
+  const onSubmit: SubmitHandler<FormData> = async (data: any) => {
     // post comment here
     // console.log(data);
     if (commentChecker(data.comment)) {
@@ -71,7 +75,7 @@ const PostPage = () => {
       return;
     }
   };
-  const deleteThisComment = async (id:any, username:any) => {
+  const deleteThisComment = async (id: any, username: any) => {
     setModalIsOpen(true);
     if (session?.user?.name === username) {
       const deletedData = await deleteComment({
@@ -121,7 +125,7 @@ const PostPage = () => {
       </div>
       <div className="-my-5 rounded-b-md border border-t-0 border-gray-300 bg-white py-5 px-10">
         <hr className="py-2" />
-        {post?.commentList.map((comment:any) => (
+        {post?.commentList.map((comment: any) => (
           <div
             key={comment.id}
             className="relative flex items-center space-x-2 space-y-5"
@@ -137,7 +141,7 @@ const PostPage = () => {
                   right: 0,
                   bottom: 0,
                   backgroundColor: "rgba(255, 255, 255, 0.75)",
-                  zIndex:"100",
+                  zIndex: "100",
                 },
                 content: {
                   position: "absolute",
@@ -152,7 +156,7 @@ const PostPage = () => {
                   borderRadius: "4px",
                   outline: "none",
                   padding: "45px",
-                  zIndex:"100",
+                  zIndex: "100",
                 },
               }}
             >
@@ -196,12 +200,13 @@ const PostPage = () => {
 
               <p>{comment.text}</p>
             </div>
-            
+
             <div
               className="postButtons absolute inset-y-0 right-0"
               onClick={() => {
-                if(session?.user?.name===comment.username){router.push(`/comment/edit/${comment.id}`);}
-                else toast("You aren't the author of this comment!");
+                if (session?.user?.name === comment.username) {
+                  router.push(`/comment/edit/${comment.id}`);
+                } else toast("You aren't the author of this comment!");
               }}
             >
               <PencilIcon className="h-4 w-4" />

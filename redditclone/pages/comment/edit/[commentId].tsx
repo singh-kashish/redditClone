@@ -5,7 +5,11 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { MODIFY_COMMENT } from "../../../graphql/mutations";
-import { GET_COMMENT_BY__COMMENT_ID } from "../../../graphql/queries";
+import { GET_COMMENT_BY__COMMENT_ID, GET_POSTS_BY_POST_ID } from "../../../graphql/queries";
+
+type FormData = {
+  comment:string;
+};
 
 const EditComment = () => {
   const { data: session } = useSession();
@@ -18,7 +22,9 @@ const EditComment = () => {
   } = useForm<FormData>();
   const router = useRouter();
 
-  const [modifyComment] = useMutation(MODIFY_COMMENT,{});
+  const [modifyComment] = useMutation(MODIFY_COMMENT,{
+    refetchQueries:[GET_POSTS_BY_POST_ID,"getPost"]
+  });
 
   const commentChecker = (comment:any) => {
     if (!comment || comment.length == 0) return false;
