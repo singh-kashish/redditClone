@@ -30,7 +30,7 @@ type Props = {
   post: Post;
 };
 
-const Post = ({ post }: Props) => {
+const Post = ({ post }: any) => {
   
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const Router = useRouter();
@@ -241,10 +241,10 @@ const Post = ({ post }: Props) => {
           {/* Image */}
           <img className="w-full" src={post.image} alt="" />
           {/* Footer */}
-          <div className="flex space-x-4 text-gray-400">
+          <div className="flex space-x-1 text-gray-400">
             <div className="postButtons">
               <ChatAltIcon className="h-6 w-6" />
-              <p className="hidden sm:inline">
+              <p className="hidden sm:inline ">
                 {post.commentList ? post.commentList.length : 0} Comments
               </p>
             </div>

@@ -34,7 +34,7 @@ const EditPost = () => {
       id: Router.query.post_Id,
     },
   });
-  const post: Post = data?.getPost;
+  const post: any = data?.getPost;
   // console.log(post);
 
   const [modifyPost] = useMutation(MODIFY_POST, {

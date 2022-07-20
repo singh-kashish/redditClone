@@ -29,7 +29,7 @@ const PostPage = () => {
     },
   });
 
-  const post: Post = data?.getPost;
+  const post: any = data?.getPost;
 
   const {
     register,
@@ -39,7 +39,7 @@ const PostPage = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const commentChecker = (comment) => {
+  const commentChecker = (comment:any) => {
     if (!comment || comment.length == 0) return false;
     else {
       let invalidComment = false;
@@ -49,7 +49,7 @@ const PostPage = () => {
       return invalidComment;
     }
   };
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  const onSubmit: SubmitHandler<FormData> = async (data:any) => {
     // post comment here
     // console.log(data);
     if (commentChecker(data.comment)) {
@@ -71,7 +71,7 @@ const PostPage = () => {
       return;
     }
   };
-  const deleteThisComment = async (id, username) => {
+  const deleteThisComment = async (id:any, username:any) => {
     setModalIsOpen(true);
     if (session?.user?.name === username) {
       const deletedData = await deleteComment({
@@ -121,7 +121,7 @@ const PostPage = () => {
       </div>
       <div className="-my-5 rounded-b-md border border-t-0 border-gray-300 bg-white py-5 px-10">
         <hr className="py-2" />
-        {post?.commentList.map((comment) => (
+        {post?.commentList.map((comment:any) => (
           <div
             key={comment.id}
             className="relative flex items-center space-x-2 space-y-5"

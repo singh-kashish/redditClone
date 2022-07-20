@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { MODIFY_COMMENT } from "../../../graphql/mutations";
 import { GET_COMMENT_BY__COMMENT_ID } from "../../../graphql/queries";
@@ -20,7 +20,7 @@ const EditComment = () => {
 
   const [modifyComment] = useMutation(MODIFY_COMMENT,{});
 
-  const commentChecker = (comment) => {
+  const commentChecker = (comment:any) => {
     if (!comment || comment.length == 0) return false;
     else {
       let invalidComment = false;
