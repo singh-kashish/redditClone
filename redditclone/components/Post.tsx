@@ -148,8 +148,8 @@ const Post = ({ post }: Props) => {
       toast("Taking you to the edit page");
       Router.push(`/post/edit/${post.id}`);
     } else {
-      console.log(post);
-      console.log("usr", session?.user?.name);
+      // console.log(post);
+      // console.log("usr", session?.user?.name);
       toast("Try editing a post made by you, and not someone else");
     }
   };

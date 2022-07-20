@@ -41,7 +41,7 @@ const EditComment = () => {
   const post_id = data?.getComment?.post_id;
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     // post comment here
-    console.log(data);
+    // console.log(data);
     if (commentChecker(data.comment)) {
       const notification = toast.loading("Changing your comment");
       const dataFromgql = await modifyComment({
@@ -54,7 +54,7 @@ const EditComment = () => {
       toast.success("Comment Successfully Modified!", {
         id: notification,
       });
-      console.log(dataFromgql);
+      // console.log(dataFromgql);
       router.push(`/post/${post_id}`)
     } else {
       toast("Can't post an empty comment, try deleting it.");

@@ -51,7 +51,7 @@ const PostPage = () => {
   };
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     // post comment here
-    console.log(data);
+    // console.log(data);
     if (commentChecker(data.comment)) {
       const notification = toast.loading("Posting your comment");
       const dataFromgql = await addComment({
@@ -65,7 +65,7 @@ const PostPage = () => {
       toast.success("Comment Successfully Posted!", {
         id: notification,
       });
-      console.log(dataFromgql);
+      // console.log(dataFromgql);
     } else {
       toast("Can't post an empty comment!");
       return;

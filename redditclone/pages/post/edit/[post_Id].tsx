@@ -35,7 +35,7 @@ const EditPost = () => {
     },
   });
   const post: Post = data?.getPost;
-  console.log(post);
+  // console.log(post);
 
   const [modifyPost] = useMutation(MODIFY_POST, {
     refetchQueries: [GET_ALL_POSTS, "getAllPosts"],
@@ -54,14 +54,14 @@ const EditPost = () => {
     setValue("postImage", post?.image);
     setValue("postTitle", post?.title);
     setValue("subreddit", post?.subreddit?.topic);
-    console.log(post);
+    // console.log(post);
   }, [post]);
 
   const onSubmit = handleSubmit(async (formData) => {
-    console.log(formData);
+    // console.log(formData);
     toast.loading("Setting the values for this post");
     
-    console.log("Creating post...", formData);
+    // console.log("Creating post...", formData);
     const image = formData.postImage || "";
     const {
       data: { modifyPost: newPost },

@@ -138,6 +138,17 @@ type Query {
       table: "subreddit"
       configuration: "postgresql_config"
     )
+  getSubredditListByLimit(limit: Int!): [Subreddit]
+    @dbquery(
+      type: "postgresql"
+
+      query: """
+      select * from "subreddit"
+      order by "created_at" desc
+      limit $1
+      """
+      configuration: "postgresql_config"
+    )
   getPostUsingSubreddit_id(id: ID!): [Post]
     @dbquery(
       type: "postgresql"
@@ -168,11 +179,7 @@ type Query {
 These are some examples of mutations generated from the schema. Feel free to modify them or add your own.
 """
 type Mutation {
-  insertComment(
-    post_id: ID!
-    text: String!
-    username: String!
-  ): Comment
+  insertComment(post_id: ID!, text: String!, username: String!): Comment
     @dbquery(
       type: "postgresql"
       schema: "public"
@@ -254,8 +261,8 @@ type Mutation {
       """
       configuration: "postgresql_config"
     )
-    modifyPost(id:ID!,image: String!,body: String!,title: String!):Post
-      @dbquery(
+  modifyPost(id: ID!, image: String!, body: String!, title: String!): Post
+    @dbquery(
       type: "postgresql"
       schema: "public"
       query: """
@@ -265,16 +272,15 @@ type Mutation {
       """
       configuration: "postgresql_config"
     )
-    modifyComment(id:ID!,text:String!):Comment
-      @dbquery(
-        type: "postgresql"
-        schema: "public"
-        query: """
-            UPDATE "public"."comment"
-            SET "text"=$2 
-            WHERE "id"=$1
-        """
-        configuration:"postgresql_config"
-      )
-   
+  modifyComment(id: ID!, text: String!): Comment
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "public"."comment"
+      SET "text"=$2
+      WHERE "id"=$1
+      """
+      configuration: "postgresql_config"
+    )
 }

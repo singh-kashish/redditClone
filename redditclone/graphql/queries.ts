@@ -129,3 +129,13 @@ export const GET_COMMENT_BY__COMMENT_ID = gql`
     }
   }
 `
+
+export const GET_SUBREDDIT_WITH_LIMIT = gql`
+    query MyQuery($limit:Int!){
+      getSubredditListByLimit(limit:$limit){
+        created_at
+        id
+        topic
+      }
+    }
+`

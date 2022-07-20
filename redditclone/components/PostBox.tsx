@@ -37,7 +37,7 @@ function PostBox({subreddit} : Props) {
   } = useForm<FormData>();
 
   const onSubmit = handleSubmit(async (formData) => {
-    console.log(formData);
+    // console.log(formData);
     const notification = toast.loading("Creating new post...");
     try {
       // query for the subreddit topic
@@ -53,9 +53,9 @@ function PostBox({subreddit} : Props) {
       const subredditExists = getSubredditListByTopic.length > 0;
       if (!subredditExists) {
         // create subreddit
-        console.log(
-          "Subreddit is not present in directory, adding to directory"
-        );
+        // console.log(
+        //   "Subreddit is not present in directory, adding to directory"
+        // );
 
         const {
           data: { insertSubreddit: newSubreddit },
@@ -65,7 +65,7 @@ function PostBox({subreddit} : Props) {
           },
         });
 
-        console.log("Creating post...", formData);
+        // console.log("Creating post...", formData);
         const image = formData.postImage || "";
         const {
           data: { insertPost: newPost },
@@ -78,11 +78,11 @@ function PostBox({subreddit} : Props) {
             username: session?.user?.name,
           },
         });
-        console.log("New post added:", newPost);
+        // console.log("New post added:", newPost);
       } else {
         // use existing subreddit
-        console.log("using existing subreddit");
-        console.log(getSubredditListByTopic);
+        // console.log("using existing subreddit");
+        // console.log(getSubredditListByTopic);
 
         const image = formData.postImage || "";
         await addPost({
@@ -105,7 +105,7 @@ function PostBox({subreddit} : Props) {
         id: notification,
       });
     } catch (error) {
-      console.log("ERROR->", error);
+      // console.log("ERROR->", error);
       toast.error("Whoops something went wrong!", {
         id: notification,
       });
