@@ -10,16 +10,16 @@ This is a Reddit Clone made using ReactJs,TypeScript,ExpressJS,NodeJS,GraphQl,St
 
 ![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white)
 
-- This Reddit Clone is made using **ReactJS** for Front End hosted with **Vercel**.
+- This Reddit Clone is made using **NextJS** for Front End hosted with **Vercel**.
 - Data is hosted over **Supabase** and can be added/retrieved/edited.
 - Used **GraphQl** for Application State Management.
 - Authentication is implemented using **Reddit's Authentication API**.
-- Used Typescript (https://camo.githubusercontent.com/546a69e181c81db2b965e705f56793346db92db499727e149bbddebad35fc135/68747470733a2f2f6261646765732e66726170736f66742e636f6d2f747970657363726970742f636f64652f747970657363726970742e706e673f763d313031) to ensure type correctness.
+- Used Typescript ![Ts](https://camo.githubusercontent.com/546a69e181c81db2b965e705f56793346db92db499727e149bbddebad35fc135/68747470733a2f2f6261646765732e66726170736f66742e636f6d2f747970657363726970742f636f64652f747970657363726970742e706e673f763d313031) to ensure type correctness.
 - All the components are available in root -> redditclone -> components
 - "npm start" can be used to run the project on a local server on PORT : 3000
 - This app was made using CREATE-REACT-APP
 - **Features** : LogIn using Reddit's credentials , create/edit/delete (CRUD) for POSTS/Comments/Votes/Subreddits ,etc.
-- Since this project is made with Nextjs ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) we use pages folder to store different pages.
+- Since this project is made with NextJs  ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) , we use pages folder to store different pages.
 
 # To run using local server :-
 
