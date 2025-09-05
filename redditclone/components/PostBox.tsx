@@ -1,204 +1,93 @@
-import { useSession } from "next-auth/react";
+// components/PostBox.tsx
 import React, { useState } from "react";
-import Avatar from "./Avatar";
-import { PhotographIcon, LinkIcon } from "@heroicons/react/outline";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@apollo/client";
-import { ADD_POST, ADD_SUBREDDIT } from "../graphql/mutations";
-import client from "../apollo-client";
-import { GET_ALL_POSTS, GET_SUBREDDIT_BY_TOPIC } from "../graphql/queries";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
+import Avatar from "./Avatar";
+import { getSubredditByTopic, addSubreddit } from "../services/subredditService";
+import { addPost } from "../services/postService";
 
 type FormData = {
   postTitle: string;
-  postBody: string;
-  postImage: string;
-  subreddit: string;
+  postBody?: string;
+  postImage?: string;
+  subreddit?: string;
 };
 
 type Props = {
-  subreddit?:string;
-} 
+  defaultSubreddit?: string;
+  onPostCreated?: () => void;
+};
 
-
-function PostBox({subreddit} : Props) {
+export default function PostBox({ defaultSubreddit, onPostCreated }: Props) {
   const { data: session } = useSession();
-  const [addPost] = useMutation(ADD_POST, {
-    refetchQueries: [GET_ALL_POSTS, "getPostList"],
-  });
-  const [addSubreddit] = useMutation(ADD_SUBREDDIT);
-  const [imageBoxOpen, setImageBoxOpen] = useState<boolean>(false);
-  const {
-    register,
-    setValue,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormData>();
+  const { register, handleSubmit, watch, setValue } = useForm<FormData>();
+  const [imageBoxOpen, setImageBoxOpen] = useState(false);
 
-  const onSubmit = handleSubmit(async (formData) => {
-    // console.log(formData);
-    const notification = toast.loading("Creating new post...");
+  const title = watch("postTitle");
+
+  const onSubmit = async (form: FormData) => {
+    if (!session?.user?.name) {
+      toast.error("Please sign in to post");
+      return;
+    }
+    const notification = toast.loading("Creating post...");
     try {
-      // query for the subreddit topic
-      const {
-        data: { getSubredditListByTopic },
-      } = await client.query({
-        query: GET_SUBREDDIT_BY_TOPIC,
-        variables: {
-          topic: subreddit || formData.subreddit,
-        },
-      });
-
-      const subredditExists = getSubredditListByTopic.length > 0;
-      if (!subredditExists) {
-        // create subreddit
-        // console.log(
-        //   "Subreddit is not present in directory, adding to directory"
-        // );
-
-        const {
-          data: { insertSubreddit: newSubreddit },
-        } = await addSubreddit({
-          variables: {
-            topic: formData.subreddit,
-          },
-        });
-
-        // console.log("Creating post...", formData);
-        const image = formData.postImage || "";
-        const {
-          data: { insertPost: newPost },
-        } = await addPost({
-          variables: {
-            body: formData.postBody,
-            image: image,
-            subreddit_id: newSubreddit.id,
-            title: formData.postTitle,
-            username: session?.user?.name,
-          },
-        });
-        // console.log("New post added:", newPost);
-      } else {
-        // use existing subreddit
-        // console.log("using existing subreddit");
-        // console.log(getSubredditListByTopic);
-
-        const image = formData.postImage || "";
-        await addPost({
-          variables: {
-            body: formData.postBody,
-            image: image,
-            subreddit_id: getSubredditListByTopic[0].id,
-            title: formData.postTitle,
-            username: session?.user?.name,
-          },
-        });
+      const rawTopic = (form.subreddit ?? defaultSubreddit ?? "").trim();
+      const topic = rawTopic.replace(/^\/+/, "");
+      if (!topic) {
+        toast.error("Subreddit required", { id: notification });
+        return;
       }
 
-      // After the post has been added to the database
+      const { data: existing, error: e } = await getSubredditByTopic(topic);
+      if (e) throw e;
+
+      let subId: number;
+      if (!existing || existing.length === 0) {
+        const { data: newSub, error: addErr } = await addSubreddit(topic);
+        if (addErr) throw addErr;
+        subId = newSub!.id;
+      } else subId = existing[0].id;
+
+      const { data, error } = await addPost({
+        title: form.postTitle,
+        body: form.postBody ?? "",
+        image: form.postImage ?? "",
+        subreddit_id: subId,
+        username: session.user.name ?? "unknown",
+      });
+
+      if (error) throw error;
+      toast.success("Post created!", { id: notification });
+      setValue("postTitle", "");
       setValue("postBody", "");
       setValue("postImage", "");
-      setValue("postTitle", "");
       setValue("subreddit", "");
-      toast.success("New Post Created!", {
-        id: notification,
-      });
-    } catch (error) {
-      // console.log("ERROR->", error);
-      toast.error("Whoops something went wrong!", {
-        id: notification,
-      });
+      onPostCreated?.();
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to create post", { id: notification });
     }
-  });
-  
+  };
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="sticky top-20 z-50 bg-white border rounded-md border-gray-300 p-2"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="rounded-md border border-gray-300 bg-white p-3">
       <div className="flex items-center space-x-3">
-        {/* Avatar */}
         <Avatar />
-        <input
-          {...register("postTitle", { required: true })}
-          disabled={!session}
-          className="flex-1 rounded-md bg-gray-50"
-          type="text"
-          placeholder={
-            session
-              ? subreddit
-                ? `Create a post in r/${subreddit}`
-                : "Create a post by entering a title"
-              : "You need to log in to post anything!"
-          }
-        />
-        <PhotographIcon
-          onClick={() => setImageBoxOpen(!imageBoxOpen)}
-          className={`h-6 cursor-pointer text-gray-300 ${
-            imageBoxOpen && "text-blue-300"
-          }`}
-        />
-        <LinkIcon className={`h-6 text-gray-300`} />
+        <input {...register("postTitle", { required: true })} disabled={!session} className="flex-1 rounded-md bg-gray-50 p-2" placeholder={session ? "Create a post" : "Sign in to post"} />
       </div>
-      {!!watch("postTitle") && (
-        <div className="flex flex-col py-2">
-          <div className="flex items-center px-2">
-            <p className="min-w-[90px]">Body:</p>
-            <input
-              className="m-2 flex-1 bg-blue-50 p-2 outline-none"
-              {...register("postBody")}
-              type="text"
-              placeholder="Text (optional)"
-            />
+
+      {!!title && (
+        <div className="mt-3 flex flex-col space-y-2">
+          <input {...register("postBody")} className="bg-gray-50 p-2" placeholder="Text (optional)" />
+          <input {...register("subreddit")} defaultValue={defaultSubreddit ?? ""} className="bg-gray-50 p-2" placeholder="Subreddit (e.g. reactjs)" />
+          <div>
+            <button type="button" onClick={() => setImageBoxOpen((s) => !s)} className="text-sm text-blue-500 mb-2">{imageBoxOpen ? "Hide" : "Add image"}</button>
           </div>
-          {!subreddit && (
-            <div className="flex items-center px-2">
-              <p className="min-w-[90px]">Subreddit:</p>
-              <input
-                className="m-2 flex-1 bg-blue-50 p-2 outline-none"
-                {...register("subreddit", { required: true })}
-                type="text"
-                placeholder="/reactjs,/nextjs,etc"
-              />
-            </div>
-          )}
-
-          {imageBoxOpen && (
-            <div className="flex items-center px-2">
-              <p className="min-w-[90px]">Image URL:</p>
-              <input
-                className="m-2 flex-1 bg-blue-50 p-2 outline-none"
-                {...register("postImage")}
-                type="text"
-                placeholder="Optional..."
-              />
-            </div>
-          )}
-          {/*Error Handling with react-hook-form */}
-          {Object.keys(errors).length > 0 && (
-            <div className="space-y-2 p-2 text-red-500">
-              {errors.postTitle?.type === "required" && (
-                <p> A Post Title is required</p>
-              )}
-              {errors.subreddit?.type === "required" && (
-                <p> A Subreddit is required</p>
-              )}
-            </div>
-          )}
-
-          {!!watch("postTitle") && (
-            <button
-              type="submit"
-              className="w-full rounded-full p-2 bg-blue-600 text-white"
-            >
-              Create Post
-            </button>
-          )}
+          {imageBoxOpen && <input {...register("postImage")} className="bg-gray-50 p-2" placeholder="Image URL" />}
+          <button type="submit" className="w-full rounded-full p-2 bg-blue-600 text-white">Create Post</button>
         </div>
       )}
     </form>
   );
 }
-
-export default PostBox;

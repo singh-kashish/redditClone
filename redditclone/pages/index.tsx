@@ -1,42 +1,29 @@
-import type { NextPage } from "next";
+// pages/index.tsx
 import Head from "next/head";
-import Image from "next/image";
-import Header from "../components/Header";
 import PostBox from "../components/PostBox";
 import Feed from "../components/Feed";
-import { useQuery } from "@apollo/client";
-import { GET_SUBREDDIT_WITH_LIMIT } from "../graphql/queries";
+import { useSubreddits } from "../hooks/useSubreddits";
 import SubredditRow from "../components/SubredditRow";
 
-const Home: NextPage = () => {
-  const {data} = useQuery(GET_SUBREDDIT_WITH_LIMIT,{
-    variables:{
-      limit:10,
-    },
-  });
- 
-  const subreddits : Subreddit[] = data?.getSubredditListByLimit;
+export default function Home() {
+  const { subreddits, loading } = useSubreddits(10);
+
   return (
     <div className="max-w-5xl my-7 mx-auto">
-      <Head>
-        <title>Reddit Clone</title>
-      </Head>
-      <PostBox />
+      <Head><title>Reddit Clone</title></Head>
+      <PostBox onPostCreated={() => { /* will cause re-render by state changes in Feed via hooks */ }} />
       <div className="flex">
-        <Feed/>
-        <div className="sticky top-36 mx-5 mt-5 hidden h-fit min-w-[300px] rounded-md border border-gray-300  bg-white lg:inline">
+        <div className="flex-1">
+          <Feed />
+        </div>
+
+        <div className="sticky top-36 mx-5 mt-5 hidden h-fit min-w-[300px] rounded-md border border-gray-300 bg-white lg:inline">
           <p className="tex-md mb-1 p-4 pb-3 font-bold">Top Communities</p>
           <div>
-            {/* Subreddits */}
-            {subreddits?.map((subreddit,i)=>(
-              <SubredditRow key={subreddit.id} topic={subreddit.topic} index={i}/>
-            ))}
+            {!loading && subreddits.map((s, i) => <SubredditRow key={s.id} topic={s.topic} index={i} />)}
           </div>
         </div>
       </div>
-      
     </div>
   );
-};
-
-export default Home;
+}
