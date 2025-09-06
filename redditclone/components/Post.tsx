@@ -96,7 +96,7 @@ export default function Post({ post }: Props) {
   };
 
   if (!post) return (<div className="flex w-full items-center justify-center p-10 text-xl"><Jelly size={50} color="#FF4501" /></div>);
-
+  console.log('post in post component',post);
   const safeTopic = cleanTopic(post.subreddit?.topic ?? "");
 
   return (
@@ -123,10 +123,10 @@ export default function Post({ post }: Props) {
 
         {post.image && <img className="w-full" src={post.image} alt="" />}
 
-        <div className="flex space-x-1 text-gray-400">
-          <div className="postButtons" onClick={(e) => { e.stopPropagation(); router.push(`/post/${post.id}`); }}>
+        <div className="flex flex-wrap space-x-1 text-gray-400 items-center min-w-0">
+          <div className="postButtons flex justify-start" onClick={(e) => { e.stopPropagation(); router.push(`/post/${post.id}`); }}>
             <ChatAltIcon className="h-6 w-6" />
-            <p className="hidden sm:inline ">{post.commentList ? post.commentList.length : 0} Comments</p>
+            <p className="flex justify-start object-cover whitespace-nowrap">{post.commentList ? post.commentList.length : 0} Comments</p>
           </div>
           <div className="postButtons"><GiftIcon className="h-6 w-6" /><p className="hidden sm:inline">Award</p></div>
           <div className="postButtons"><ShareIcon className="h-6 w-6" /><p className="hidden sm:inline">Share</p></div>
@@ -136,7 +136,10 @@ export default function Post({ post }: Props) {
 
           <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={{
             overlay: { backgroundColor: "rgba(255,255,255,0.75)", zIndex: 100 },
-            content: { top: "200px", left: "450px", right: "450px", bottom: "250px", padding: "45px", zIndex: 100 }
+            content: { position:"absolute",top: "50%", left: "50%",right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)', zIndex: 100, width: "75%", height: "50%", borderRadius: "15px", border: "1px solid #ccc", background: "#fff", overflow: "auto", WebkitOverflowScrolling: "touch", outline: "none", padding: "10%" }, 
           }}>
             <div className="flex flex-col items-center justify-center mt-11">
               <p className="text-xl">Are you sure you want to delete?</p>

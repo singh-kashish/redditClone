@@ -33,7 +33,7 @@ export default function CommentList({ comments, onDeleted }: Props) {
             </div>
             <div className="mt-2">{c.text}</div>
             <div className="mt-2 flex space-x-2">
-              <button onClick={() => router.push(`/comment/edit?commentId=${c.id}`)} className="text-xs text-blue-500">Edit</button>
+              <button onClick={() => router.push(`/comment/edit/${c?.id}`)} className="text-xs text-blue-500">Edit</button>
               <button onClick={() => doDelete(c.id, c.username)} className="text-xs text-red-500">Delete</button>
             </div>
           </div>

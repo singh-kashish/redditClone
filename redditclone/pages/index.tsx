@@ -4,17 +4,19 @@ import PostBox from "../components/PostBox";
 import Feed from "../components/Feed";
 import { useSubreddits } from "../hooks/useSubreddits";
 import SubredditRow from "../components/SubredditRow";
+import { useState } from "react";
 
 export default function Home() {
-  const { subreddits, loading } = useSubreddits(10);
+  const [refresh, setRefresh] = useState<number>(0);
+  const { subreddits, loading } = useSubreddits(10,refresh);
 
   return (
     <div className="max-w-5xl my-7 mx-auto">
       <Head><title>Reddit Clone</title></Head>
-      <PostBox onPostCreated={() => { /* will cause re-render by state changes in Feed via hooks */ }} />
+      <PostBox onPostCreated={() => {setRefresh(r=>r+1)}} />
       <div className="flex">
         <div className="flex-1">
-          <Feed />
+          <Feed refresh={refresh}/>
         </div>
 
         <div className="sticky top-36 mx-5 mt-5 hidden h-fit min-w-[300px] rounded-md border border-gray-300 bg-white lg:inline">

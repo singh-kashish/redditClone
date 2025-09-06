@@ -3,9 +3,9 @@ import { useEffect, useState, useCallback } from "react";
 import { getSubreddits } from "../services/subredditService";
 import { Subreddit } from "../types/db";
 
-export function useSubreddits(limit = 10) {
+export function useSubreddits(limit = 10,refresh?:number) {
   const [subreddits, setSubreddits] = useState<Subreddit[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
 
   const fetch = useCallback(async () => {
@@ -17,7 +17,7 @@ export function useSubreddits(limit = 10) {
     setLoading(false);
   }, [limit]);
 
-  useEffect(() => { fetch(); }, [fetch]);
+  useEffect(() => { fetch(); }, [fetch, refresh]);
 
   return { subreddits, loading, error, refetch: fetch };
 }

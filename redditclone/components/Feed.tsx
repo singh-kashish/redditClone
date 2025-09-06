@@ -2,18 +2,23 @@
 import React from "react";
 import { usePosts } from "../hooks/usePosts";
 import Post from "./Post";
+import { DotSpinner } from "@uiball/loaders";
+import { useEffect } from "react";
+type Props = { 
+  topic?: string,
+  refresh?: number 
+};
 
-type Props = { topic?: string };
-
-export default function Feed({ topic }: Props) {
-  const { posts, loading } = usePosts(topic);
-
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (!posts.length) return <div className="p-4">No posts</div>;
-
+export default function Feed({ topic,refresh }: Props) {
+  const { posts, loading, error, refetch } = usePosts(topic);
+  useEffect(() => {
+    if(refresh !== undefined)refetch();
+  }, [refresh,refetch]);
   return (
     <div className="space-y-4">
-      {posts.map((p) => <Post key={p.id} post={p} />)}
+      {(loading)?(<div className="flex items-center justify-center"><DotSpinner size={80} color="orange"/></div>):
+      (!posts.length)? (<div className="p-4">No posts</div>):(posts.map((p) => <Post key={p.id} post={p} />))
+      }
     </div>
   );
 }

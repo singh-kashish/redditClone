@@ -17,9 +17,10 @@ type FormData = {
 type Props = {
   defaultSubreddit?: string;
   onPostCreated?: () => void;
+  refresh?: number;
 };
 
-export default function PostBox({ defaultSubreddit, onPostCreated }: Props) {
+export default function PostBox({ defaultSubreddit, onPostCreated, refresh }: Props) {
   const { data: session } = useSession();
   const { register, handleSubmit, watch, setValue } = useForm<FormData>();
   const [imageBoxOpen, setImageBoxOpen] = useState(false);
@@ -70,8 +71,9 @@ export default function PostBox({ defaultSubreddit, onPostCreated }: Props) {
     }
   };
 
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="rounded-md border border-gray-300 bg-white p-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="rounded-md border border-gray-300 bg-white p-3 mb-3">
       <div className="flex items-center space-x-3">
         <Avatar />
         <input {...register("postTitle", { required: true })} disabled={!session} className="flex-1 rounded-md bg-gray-50 p-2" placeholder={session ? "Create a post" : "Sign in to post"} />

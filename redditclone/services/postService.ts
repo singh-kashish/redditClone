@@ -18,14 +18,27 @@ function mapBase(d: DBPost) {
 
 /** get all posts with subreddit joined */
 export async function getAllPosts(): Promise<{ data: Post[]; error: any }> {
-  const { data, error } = await supabase.from("post").select("*, subreddit(*)").order("created_at", { ascending: false });
+  const { data, error } = await supabase.from("post").select(` *,
+    subreddit (
+      id,
+      topic,
+      created_at
+    ),
+    comment (
+      id,
+      text,
+      post_id,
+      username,
+      created_at
+    )
+`).order("created_at", { ascending: false });
   if (error) return { data: [], error };
   const posts: Post[] = (data ?? []).map((p: any) => ({
     ...mapBase(p),
     subreddit: p.subreddit ? { id: p.subreddit.id, topic: p.subreddit.topic ?? "", created_at: p.subreddit.created_at ?? "" } : null,
-    commentList: p.commentList ?? [],
+    commentList: p.comment ?? [],
     votes: p.votes ?? [],
-    commentCount: 0,
+    commentCount: p.comment ? p.comment.length : 0,
   }));
   return { data: posts, error: null };
 }

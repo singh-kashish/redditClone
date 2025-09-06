@@ -5,11 +5,11 @@ import { usePost } from "../../hooks/usePost";
 import { useComments } from "../../hooks/useComments";
 import CommentBox from "../../components/CommentBox";
 import CommentList from "../../components/CommentList";
+import Post from "../../components/Post";
 
 export default function PostPage() {
   const router = useRouter();
-  const postIdNum = Number(router.query.post_id);
-
+  const postIdNum = Number(router.query.postId);
   const { post, loading: postLoading, refetch: refetchPost } = usePost(Number.isFinite(postIdNum) ? postIdNum : undefined);
   const { comments, loading: commentsLoading, refetch: refetchComments } = useComments(Number.isFinite(postIdNum) ? postIdNum : undefined);
 
@@ -18,12 +18,7 @@ export default function PostPage() {
 
   return (
     <div className="mx-auto my-7 max-w-5xl">
-      {/* Post rendering: reuse existing Post component if you want */}
-      <div className="rounded border bg-white p-4 mb-4">
-        <h1 className="text-2xl font-bold">{post.title}</h1>
-        <p className="text-gray-700 mt-2">{post.body}</p>
-      </div>
-
+      <Post post={post} />
       <CommentBox postId={post.id} onCommentAdded={() => { refetchComments(); refetchPost(); }} />
       <CommentList comments={comments} onDeleted={() => { refetchComments(); refetchPost(); }} />
     </div>
