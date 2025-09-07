@@ -32,7 +32,6 @@ export default function Post({ post }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
-  console.log("Post data:", post);
 
   const [votes, setVotes] = useState<Vote[]>([]);
   const [myVote, setMyVote] = useState<Vote | null>(null);
