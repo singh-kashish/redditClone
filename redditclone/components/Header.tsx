@@ -41,8 +41,9 @@ function Header() {
   }, [Router.events]);
   return (
     <div className="sticky top-0 z-10 flex bg-white px-4 py-2 shadow-sm items-center justify-between">
-      <div className="relative h-10 w-20 flex-shrink-0 cursor-pointer">
         <Link href="/">
+      <div className="relative h-10 w-20 flex-shrink-0 cursor-pointer">
+        
           <Image
             alt="reddit"
             src="https://upload.wikimedia.org/wikipedia/en/1/1f/Reddit_logo_2023.svg"
@@ -50,8 +51,8 @@ function Header() {
             sizes="80px"
             className="object-contain"
           />
-        </Link>
       </div>
+      </Link>
       <Link href="/" className="lg:mx-7 flex items-center justify-center xl:min-w-[300px] cursor-pointer">
         <HomeIcon className="h-5 w-5 hidden sm:flex" />
         <p className="flex-1 ml-2 hidden sm:inline">Home</p>
@@ -116,7 +117,7 @@ function Header() {
               src="https://logoeps.com/wp-content/uploads/2014/09/52053-reddit-logo-icon-vector-icon-vector-eps.png"
               fill
               sizes="20px"
-              style={{ objectFit: "contain" }}
+              className="object-contain"
             />
           </div>
           <p className="text-gray-400">Sign In</p>

@@ -46,16 +46,39 @@ export async function getAllPosts(): Promise<{ data: Post[]; error: any }> {
 export async function getPostsByTopic(topic: string): Promise<{ data: Post[]; error: any }> {
   const cleanTopic = topic.trim().replace(/^\/+/, "");
   // find subreddit id
-  const { data: subs, error: subErr } = await supabase.from("subreddit").select("*").eq("topic", cleanTopic);
+  const { data: subs, error: subErr } = await supabase
+    .from("subreddit")
+    .select("id, topic, created_at")
+    .eq("topic", cleanTopic);
   if (subErr) return { data: [], error: subErr };
   const sub = subs?.[0];
   if (!sub) return { data: [], error: null };
 
-  const { data, error } = await supabase.from("post").select("*").eq("subreddit_id", sub.id).order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("post")
+    .select(`
+      *,
+      comment (
+        id,
+        text,
+        post_id,
+        username,
+        created_at
+      )
+    `)
+    .eq("subreddit_id", sub.id)
+    .order("created_at", { ascending: false });
+
   if (error) return { data: [], error };
-  const posts = (data ?? []).map((p: any) => ({ ...mapBase(p), subreddit: { id: sub.id, topic: sub.topic ?? "", created_at: sub.created_at ?? "" }, commentCount: 0 }));
+  const posts = (data ?? []).map((p: any) => ({
+    ...mapBase(p),
+    subreddit: { id: sub.id, topic: sub.topic ?? "", created_at: sub.created_at ?? "" },
+    commentList: p.comment ?? [],
+    commentCount: p.comment ? p.comment.length : 0,
+  }));
   return { data: posts, error: null };
 }
+
 
 export async function getFullPost(id: number): Promise<{ data: Post | null; error: any }> {
   const { data: raw, error } = await supabase.from("post").select("*").eq("id", id).single();

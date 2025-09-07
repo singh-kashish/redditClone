@@ -20,7 +20,6 @@ export function usePostsByUsername(username: string) {
       if (res.error) setError(res.error);
       setPosts(res.data ?? []);
       setLoading(false);
-      console.log("Fetched posts by user:", res);
     }, [username]);
   
     useEffect(() => { fetch(); }, [fetch]);
