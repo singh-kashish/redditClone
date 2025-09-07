@@ -12,9 +12,7 @@ type FormData = { comment: string };
 export default function EditComment() {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log('router',router.query);
   const idNum = Number(router.query.commentId);
-  console.log('idNum',idNum);
   const { comment, loading } = useComment(Number.isFinite(idNum) ? idNum : undefined);
 
   const { register, handleSubmit, setValue } = useForm<FormData>();

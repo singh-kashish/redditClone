@@ -89,14 +89,23 @@ export default function Post({ post }: Props) {
   };
 
   const deleteThisPost = async () => {
-    if (!post?.id) return;
-    if (session?.user?.name === post?.username) {
-      await deletePost(post.id); setModalIsOpen(false); toast("Post was deleted"); router.push("/");
-    } else { toast("You aren't the author of this post, so can't delete this one..."); router.push("/"); }
+    if (!post?.id) {
+      toast.error("No post to delete");
+      setModalIsOpen(false);
+      return;
+    }
+    const { error } = await deletePost(post.id);
+    setModalIsOpen(false);
+    if (error) {
+      toast.error("Failed to delete post");
+      return;
+    }
+    toast.success("Post was deleted");
+    router.push("/");
   };
+  
 
   if (!post) return (<div className="flex w-full items-center justify-center p-10 text-xl"><Jelly size={50} color="#FF4501" /></div>);
-  console.log('post in post component',post);
   const safeTopic = cleanTopic(post.subreddit?.topic ?? "");
 
   return (
@@ -132,8 +141,20 @@ export default function Post({ post }: Props) {
           <div className="postButtons"><ShareIcon className="h-6 w-6" /><p className="hidden sm:inline">Share</p></div>
           <div className="postButtons"><BookmarkIcon className="h-6 w-6" /><p className="hidden sm:inline">Save</p></div>
           <div className="postButtons" onClick={(e) => { e.stopPropagation(); onEdit(); }}><PencilIcon className="h-6 w-6" /><p className="hidden sm:inline">Edit</p></div>
-          <div className="postButtons" onClick={(e) => { e.stopPropagation(); setModalIsOpen(true); }}><TrashIcon className="h-6 w-6" /><p className="hidden sm:inline">Delete</p></div>
-
+          <div
+          className="postButtons"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (post && session && session.user?.name === post.username) {
+              setModalIsOpen(true);
+            } else {
+              toast("You aren't the author of this post, so can't delete this one...");
+            }
+          }}
+        >
+          <TrashIcon className="h-6 w-6" />
+          <p className="hidden sm:inline">Delete</p>
+        </div>
           <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={{
             overlay: { backgroundColor: "rgba(255,255,255,0.75)", zIndex: 100 },
             content: { position:"absolute",top: "50%", left: "50%",right: 'auto',
@@ -144,8 +165,13 @@ export default function Post({ post }: Props) {
             <div className="flex flex-col items-center justify-center mt-11">
               <p className="text-xl">Are you sure you want to delete?</p>
               <div className="flex flex-row justify-evenly mt-2">
-                <button className="w-14 h-7 bg-teal-400 rounded-full mr-4 text-white" onClick={() => deleteThisPost()}>Yes</button>
-                <button className="w-14 h-7 bg-blue-700 rounded-full text-white" onClick={() => setModalIsOpen(false)}>No</button>
+              <button
+  className="w-14 h-7 bg-teal-400 rounded-full mr-4 text-white"
+  onClick={deleteThisPost}
+>
+  Yes
+</button>
+<button className="w-14 h-7 bg-blue-700 rounded-full text-white" onClick={() => setModalIsOpen(false)}>No</button>
               </div>
             </div>
           </Modal>

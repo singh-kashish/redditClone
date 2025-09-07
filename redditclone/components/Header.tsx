@@ -18,9 +18,27 @@ import {
 } from "@heroicons/react/outline";
 import { signIn, useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 function Header() {
   const { data: session } = useSession();
+  const [searchText, setSearchText] = React.useState<string>("");
+  const Router = useRouter();
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedText = searchText.trim();
+    if (!trimmedText) return;
+    // Navigate to search page
+    Router.push(`/search/${encodeURIComponent(trimmedText)}`);
+  }
+  // Clear search input on route change
+  React.useEffect(() => {
+    const handleRouteChange = () => setSearchText("");
+    Router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      Router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [Router.events]);
   return (
     <div className="sticky top-0 z-10 flex bg-white px-4 py-2 shadow-sm items-center">
       <div className="relative h-10 w-20 flex-shrink-0 cursor-pointer">
@@ -40,12 +58,14 @@ function Header() {
         <ChevronDownIcon className="h-5 w-5" />
       </Link>
 
-      <form className="hidden lg:flex flex-1 items-center space-x-2 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1">
+      <form className="hidden md:flex flex-1 items-center space-x-2 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1" onSubmit={handleSearch}>
         <SearchIcon className="h-6 w-6 text-gray-400" />
         <input
           className="flex-1 outline-none bg-gray-100"
           type="text"
-          placeholder="Find something amazing"
+          placeholder="Find something amazing, click enter to search"
+          value={searchText}
+          onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearchText(e.target.value)}
         />
         <button type="submit" hidden />
       </form>
@@ -73,7 +93,7 @@ function Header() {
           <div className="relative h-5 w-5 flex-shrink-0">
             <Image
               alt="tiny"
-              src="https://upload.wikimedia.org/wikipedia/en/thumb/5/58/Reddit_logo_new.svg/2560px-Reddit_logo_new.svg.png"
+              src="https://api.dicebear.com/6.x/identicon/png?seed=${encodeURIComponent(clean)}&size=128"
               fill
               sizes="20px"
               style={{ objectFit: "contain" }}
