@@ -131,3 +131,29 @@ export async function deletePost(id: number): Promise<{ error: any }> {
   const { error } = await supabase.from("post").delete().eq("id", id);
   return { error };
 }
+
+export async function getPostsByUser(username: string): Promise<{ data: Post[]; error: any }> {
+  const { data, error } = await supabase.from("post").select(` *,
+    subreddit (
+      id,
+      topic,
+      created_at
+    ),
+    comment (
+      id,
+      text,
+      post_id,
+      username,
+      created_at
+    )
+`).eq("username", username).order("created_at", { ascending: false });
+  if (error) return { data: [], error };
+  const posts: Post[] = (data ?? []).map((p: any) => ({
+    ...mapBase(p),
+    subreddit: p.subreddit ? { id: p.subreddit.id, topic: p.subreddit.topic ?? "", created_at: p.subreddit.created_at ?? "" } : null,
+    commentList: p.comment ?? [],
+    votes: p.votes ?? [],
+    commentCount: p.comment ? p.comment.length : 0,
+  }));
+  return { data: posts, error: null };
+}

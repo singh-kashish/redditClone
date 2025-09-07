@@ -28,7 +28,7 @@ export default function CommentList({ comments, onDeleted }: Props) {
           <Avatar seed={c.username} />
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-semibold">{c.username}</div>
+              <div className="text-sm font-semibold hover:text-blue-400 hover:underline cursor-pointer" onClick={(e) => { e.stopPropagation(); router.push(`/user/${c?.username}`); }}>{c.username}</div>
               <div className="text-xs text-gray-500"><TimeAgo date={c.created_at} /></div>
             </div>
             <div className="mt-2">{c.text}</div>

@@ -11,7 +11,7 @@ export default function SubredditPage() {
   const [refresh, setRefresh] = useState<number>(0);
   return (
     <div className="max-w-5xl mx-auto my-7">
-      <div className="mb-4 -mx-8 bg-white p-6 rounded">
+      <div className="mb-4 xl:-mx-8 bg-white p-6 rounded">
         <h1 className="text-3xl font-semibold">r/{topic}</h1>
         <p className="text-sm text-gray-400">r/{topic}</p>
       </div>

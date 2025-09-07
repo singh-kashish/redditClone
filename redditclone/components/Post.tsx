@@ -121,7 +121,8 @@ export default function Post({ post }: Props) {
           <Avatar seed={safeTopic} />
           <p className="text-xs text-gray-400">
             <span onClick={(e) => { e.stopPropagation(); router.push(`/subreddit/${safeTopic}`); }} className="font-bold text-black hover:text-blue-400 hover:underline cursor-pointer">r/{safeTopic}</span>{" "}
-            Posted by u/{post.username ?? "Guest"} <TimeAgo date={post.created_at ?? ""} />
+            <span onClick={(e) => { e.stopPropagation(); router.push(`/user/${post?.username}`); }} className="hover:text-blue-400 hover:underline cursor-pointer" >
+            Posted by u/{post.username ?? "Guest"}</span> <TimeAgo date={post.created_at ?? ""} />
           </p>
         </div>
 

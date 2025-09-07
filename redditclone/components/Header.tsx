@@ -40,7 +40,7 @@ function Header() {
     };
   }, [Router.events]);
   return (
-    <div className="sticky top-0 z-10 flex bg-white px-4 py-2 shadow-sm items-center">
+    <div className="sticky top-0 z-10 flex bg-white px-4 py-2 shadow-sm items-center justify-between">
       <div className="relative h-10 w-20 flex-shrink-0 cursor-pointer">
         <Link href="/">
           <Image
@@ -52,10 +52,10 @@ function Header() {
           />
         </Link>
       </div>
-      <Link href="/" className="mx-7 flex items-center justify-center xl:min-w-[300px] cursor-pointer">
-        <HomeIcon className="h-5 w-5" />
-        <p className="flex-1 ml-2 hidden lg:inline">Home</p>
-        <ChevronDownIcon className="h-5 w-5" />
+      <Link href="/" className="lg:mx-7 flex items-center justify-center xl:min-w-[300px] cursor-pointer">
+        <HomeIcon className="h-5 w-5 hidden sm:flex" />
+        <p className="flex-1 ml-2 hidden sm:inline">Home</p>
+        <ChevronDownIcon className="hidden sm:inline sm:h-5 sm:w-5" />
       </Link>
 
       <form className="hidden md:flex flex-1 items-center space-x-2 rounded-lg border border-gray-200 bg-gray-100 px-3 py-1" onSubmit={handleSearch}>
@@ -81,14 +81,14 @@ function Header() {
         <SpeakerphoneIcon className="icon" />
       </div>
 
-      <div className="ml-5 flex items-center lg:hidden">
+      <div className="hidden md:flex ml-5 items-center">
         <MenuIcon className="icon" />
       </div>
 
       {session ? (
         <button
           onClick={() => void signOut()}
-          className="flex items-center border border-gray-100 p-2 cursor-pointer space-x-2 hover:bg-gray-100"
+          className="flex items-center border border-gray-100 p-2 cursor-pointer mr-1 md:space-x-2 hover:bg-gray-100"
         >
           <div className="relative h-5 w-5 flex-shrink-0">
             <Image
@@ -99,7 +99,7 @@ function Header() {
               style={{ objectFit: "contain" }}
             />
           </div>
-          <div className="flex-1 text-xs">
+          <div className="flex-1 text-xs ml-1">
             <p className="truncate">{session?.user?.name}</p>
             <p className="text-gray-400">1 karma</p>
           </div>
@@ -108,7 +108,7 @@ function Header() {
       ) : (
         <button
           onClick={() => void signIn()}
-          className="flex items-center border border-gray-100 p-2 cursor-pointer space-x-2 hover:bg-gray-100 mx-auto"
+          className="flex items-center border border-gray-100 p-2 cursor-pointer mr-1 md:space-x-2 hover:bg-gray-100 mx-auto"
         >
           <div className="relative h-5 w-5 flex-shrink-0">
             <Image
